@@ -51,6 +51,23 @@ const getBookings = catchAsync(async (req: Request, res: Response, next: NextFun
 
 });
 
+
+const startJob = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+
+  const result = await BookingService.startJobIntoDB(
+    req.user!.id,
+    req.params.id as string
+  );
+
+  sendResponse(res, {
+    success: true,
+    statusCode: 200,
+    message: "Job started successfully",
+    data: result,
+  });
+
+});
+
 const completeJob = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
 
   const result = await BookingService.completeJobIntoDB(
@@ -71,5 +88,6 @@ export const bookingController = {
 	createBooking,
 	acceptBooking,
 	getBookings,
+	startJob,
 	completeJob
 }

@@ -192,6 +192,73 @@ const getBookingsFromDB = async (
 };
 
 
+const startJobIntoDB = async (
+	userId: string,
+	bookingId: string
+) => {
+
+	// Find technician profile
+	const technician = await prisma.technicianProfile.findUniqueOrThrow({
+		where: {
+			userId,
+		},
+	});
+
+	// Find booking
+	const booking = await prisma.booking.findUniqueOrThrow({
+		where: {
+			id: bookingId,
+		},
+		include: {
+			payment: true,
+			customer: {
+				omit: {
+					password: true,
+				},
+			},
+			service: true,
+		},
+	});
+
+	// Check ownership
+	if (booking.technicianId !== technician.id) {
+		throw new Error("You are not authorized");
+	}
+
+	// Check payment
+	if (!booking.payment || booking.payment.status !== PaymentStatus.COMPLETED) {
+		throw new Error("Customer has not completed payment");
+	}
+
+	// Booking must be PAID
+	if (booking.status !== BookingStatus.ACCEPTED) {
+		throw new Error("Booking is not ready to start");
+	}
+
+	const result = await prisma.booking.update({
+		where: {
+			id: bookingId,
+		},
+		data: {
+			status: BookingStatus.IN_PROGRESS,
+		},
+		include: {
+			customer: {
+				omit: {
+					password: true,
+				},
+			},
+			service: true,
+			payment: true,
+		},
+	});
+
+	return result;
+};
+
+
+
+
 const completeJobIntoDB = async (
 	userId: string,
 	bookingId: string
@@ -257,5 +324,6 @@ export const BookingService = {
 	createBookingIntoDB,
 	acceptBookingIntoDB,
 	getBookingsFromDB,
+	startJobIntoDB,
 	completeJobIntoDB
 };

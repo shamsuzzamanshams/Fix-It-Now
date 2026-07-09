@@ -27,8 +27,14 @@ router.get(
   bookingController.getBookings
 );
 
+router.patch(
+  "/:id/start",
+  auth(UserRole.TECHNICIAN),
+  bookingController.startJob
+);
 
-router.put(
+
+router.patch(
   "/:id/complete",
   auth(UserRole.TECHNICIAN),
   bookingController.completeJob
