@@ -1,5 +1,7 @@
 model TechnicianProfile {
   id            String    @id @default(uuid())
+  name			String?
+  phone			String?
 
   userId        String    @unique
   user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)

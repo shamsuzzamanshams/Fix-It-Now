@@ -6,7 +6,7 @@ model User {
   phone       String?
   address     String?
 
-  role        UserRole
+  role        UserRole?	@default(CUSTOMER)
   status      UserStatus  @default(ACTIVE)
 
   technicianProfile TechnicianProfile?
