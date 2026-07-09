@@ -27,4 +27,11 @@ router.get(
   bookingController.getBookings
 );
 
+
+router.put(
+  "/:id/complete",
+  auth(UserRole.TECHNICIAN),
+  bookingController.completeJob
+);
+
 export const bookingRoute = router; 

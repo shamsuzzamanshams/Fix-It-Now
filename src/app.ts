@@ -10,8 +10,8 @@ import { categoryRoute } from "./modules/catrgory/category.route";
 import { bookingRoute } from "./modules/booking/booking.route";
 import { availabilityRouter } from "./modules/availability/availability.route";
 import { PaymentRoutes } from "./modules/payment/payment.route";
-import { stripe } from "./lib/stripe";
 import { PaymentController } from "./modules/payment/payment.controller";
+import { ReviewRoutes } from "./modules/review/review.route";
 
 const app: Application = express();
 
@@ -50,5 +50,6 @@ app.use("/api/category", categoryRoute);
 app.use("/api/book", bookingRoute);
 app.use("/api/availability", availabilityRouter);
 app.use("/api/payment", PaymentRoutes);
+app.use("/api/reviews", ReviewRoutes);
 
 export default app;
