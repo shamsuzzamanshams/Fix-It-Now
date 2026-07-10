@@ -1,6 +1,10 @@
 import jwt, { JwtPayload, SignOptions } from "jsonwebtoken";
 
-const createToken = (payload: JwtPayload, secret: string, expiresIn: SignOptions) => {
+const createToken = (
+	payload: JwtPayload,
+	secret: string,
+	expiresIn: SignOptions["expiresIn"]
+) => {
 	const token = jwt.sign(
 		payload,
 		secret,
@@ -10,7 +14,7 @@ const createToken = (payload: JwtPayload, secret: string, expiresIn: SignOptions
 	return token;
 };
 
-const verifiToken = (token: string, secret: string) => {
+const verifyToken = (token: string, secret: string) => {
 	try {
 		const verifiedToken = jwt.verify(token, secret);
 		return {
@@ -18,8 +22,6 @@ const verifiToken = (token: string, secret: string) => {
 			data: verifiedToken
 		}
 	} catch (error: any) {
-		console.log("Token Verification Faield", error);
-
 		return {
 			success: false,
 			error: error.message
@@ -29,5 +31,6 @@ const verifiToken = (token: string, secret: string) => {
 
 export const jwtUtils = {
 	createToken,
-	verifiToken,
+	verifyToken,
+	verifiToken: verifyToken,
 };
