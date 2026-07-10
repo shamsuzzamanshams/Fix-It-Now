@@ -10,7 +10,7 @@ router.post("/register", userController.registerUser);
 router.get("/me",
 
 
-	// auth(UserRole.ADMIN, UserRole.CUSTOMER, UserRole.TECHNICIAN),
+	auth(UserRole.ADMIN, UserRole.CUSTOMER, UserRole.TECHNICIAN),
 
 	userController.getMyProfile);
 

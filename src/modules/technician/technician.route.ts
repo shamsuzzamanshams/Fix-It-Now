@@ -8,7 +8,7 @@ const router = express.Router();
 
 router.get(
 	"/",
-	// auth(UserRole.CUSTOMER, UserRole.ADMIN),
+	auth(UserRole.ADMIN),
 	TechnicianController.getAllTechnicians
 );
 

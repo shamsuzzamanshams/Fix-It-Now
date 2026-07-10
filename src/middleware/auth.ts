@@ -22,46 +22,43 @@ declare global {
 
 export const auth = (...requiredRole: UserRole[]) => {
 	return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-		const token = req.cookies.accesstoken ? req.cookies.accesstoken
-			:
-			req.headers.authorization?.startsWith("Bearer") ?
-				req.headers.authorization?.split(" ")[1] 
-				: req.headers.authorization
+		const token =
+			req.cookies.accesstoken ||
+			req.headers.authorization?.replace("Bearer ", "");
 
 		if (!token) {
-			throw new Error("You are not logged in. please log in access resource");
-		}
-		const verifiedToken = jwtUtils.verifiToken(token, config.jwt_access_secret);
-
-		if (!verifiedToken.success) {
-			throw new Error(verifiedToken.error);
+			throw new Error("Unauthorized");
 		}
 
-		const { name, email, id, role } = verifiedToken.data as JwtPayload;
+		const verified = jwtUtils.verifiToken(
+			token,
+			config.jwt_access_secret
+		);
 
-		if (requiredRole.length && !requiredRole.includes(role)) {
-			throw new Error("Forbidden. You don't have permission to access this resources");
+		if (!verified.success) {
+			throw new Error(verified.error);
 		}
+
+		const { id } = verified.data as JwtPayload;
 
 		const user = await prisma.user.findUnique({
-			where: {
-				id,
-				email,
-				name,
-				role
-			}
-		})
+			where: { id },
+		});
 
 		if (!user) {
-			throw new Error("User not found. please log in again");
+			throw new Error("User not found");
+		}
+
+		if (requiredRole.length && !requiredRole.includes(user.role!)) {
+			throw new Error("Forbidden");
 		}
 
 		req.user = {
-			email,
-			name,
-			id,
-			role
-		}
+			id: user.id,
+			email: user.email,
+			name: user.name,
+			role: user.role!,
+		};
 
 		next();
 	})
