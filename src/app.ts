@@ -29,15 +29,15 @@ app.use(cors({
 
 
 app.post(
-  "/api/payment/webhook",
-  express.raw({ type: "application/json" }),
-  PaymentController.handleWebhook
+	"/api/payment/webhook",
+	express.raw({ type: "application/json" }),
+	PaymentController.handleWebhook
 );
 
 app.post(
-  "/api/payments/confirm",
-  express.raw({ type: "application/json" }),
-  PaymentController.handleWebhook
+	"/api/payments/confirm",
+	express.raw({ type: "application/json" }),
+	PaymentController.handleWebhook
 );
 
 
