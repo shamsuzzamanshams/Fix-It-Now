@@ -11,8 +11,15 @@ router.post(
 	availabilityController.createAvailability
 );
 
+router.put(
+	"/",
+	auth(UserRole.TECHNICIAN),
+	availabilityController.createAvailability
+);
+
 router.get(
 	"/technician/:technicianId",
+	auth(UserRole.ADMIN, UserRole.CUSTOMER, UserRole.TECHNICIAN),
 	availabilityController.getTechnicianAvailability
 );
 
