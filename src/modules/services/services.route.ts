@@ -12,11 +12,16 @@ router.post(
 	ServiceController.createService
 );
 
-// Customer, Admin and Technician can browse services
 router.get(
 	"/",
-	auth(UserRole.CUSTOMER, UserRole.ADMIN),
+	auth(UserRole.ADMIN, UserRole.CUSTOMER, UserRole.TECHNICIAN),
 	ServiceController.getAllServices
+);
+
+router.put(
+	"/:id",
+	auth(UserRole.ADMIN, UserRole.TECHNICIAN),
+	ServiceController.updateService
 );
 
 export const ServiceRoutes = router;
