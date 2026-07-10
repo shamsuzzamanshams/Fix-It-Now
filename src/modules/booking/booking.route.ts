@@ -17,6 +17,12 @@ router.put(
   bookingController.acceptBooking
 );
 
+router.put(
+  "/:id/decline",
+  auth(UserRole.TECHNICIAN),
+  bookingController.declineBooking
+);
+
 router.get(
   "/",
   auth(
@@ -25,6 +31,16 @@ router.get(
     UserRole.TECHNICIAN
   ),
   bookingController.getBookings
+);
+
+router.get(
+  "/:id",
+  auth(
+    UserRole.ADMIN,
+    UserRole.CUSTOMER,
+    UserRole.TECHNICIAN
+  ),
+  bookingController.getBookingById
 );
 
 router.patch(

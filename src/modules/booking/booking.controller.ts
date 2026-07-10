@@ -35,6 +35,22 @@ const acceptBooking = catchAsync(async (req: Request, res: Response, next: NextF
 
 });
 
+const declineBooking = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+
+  const result = await BookingService.declineBookingIntoDB(
+    req.user?.id as string,
+    req.params.id as string
+  );
+
+  sendResponse(res, {
+    success: true,
+    statusCode: 200,
+    message: "Booking declined successfully",
+    data: result,
+  });
+
+});
+
 const getBookings = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
 
   const result = await BookingService.getBookingsFromDB(
@@ -46,6 +62,23 @@ const getBookings = catchAsync(async (req: Request, res: Response, next: NextFun
     success: true,
     statusCode: 200,
     message: "Bookings retrieved successfully",
+    data: result,
+  });
+
+});
+
+const getBookingById = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+
+  const result = await BookingService.getBookingByIdFromDB(
+    req.user?.id as string,
+    req.user?.role as UserRole,
+    req.params.id as string
+  );
+
+  sendResponse(res, {
+    success: true,
+    statusCode: 200,
+    message: "Booking retrieved successfully",
     data: result,
   });
 
@@ -84,10 +117,37 @@ const completeJob = catchAsync(async (req: Request, res: Response, next: NextFun
 
 });
 
+const updateBookingStatus = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+  const status = String(req.body.status || "").toUpperCase();
+  let result;
+
+  if (status === "ACCEPTED") {
+    result = await BookingService.acceptBookingIntoDB(req.user!.id, req.params.id as string);
+  } else if (status === "DECLINED") {
+    result = await BookingService.declineBookingIntoDB(req.user!.id, req.params.id as string);
+  } else if (status === "IN_PROGRESS") {
+    result = await BookingService.startJobIntoDB(req.user!.id, req.params.id as string);
+  } else if (status === "COMPLETED") {
+    result = await BookingService.completeJobIntoDB(req.user!.id, req.params.id as string);
+  } else {
+    throw new Error("Invalid booking status");
+  }
+
+  sendResponse(res, {
+    success: true,
+    statusCode: 200,
+    message: "Booking status updated successfully",
+    data: result,
+  });
+});
+
 export const bookingController = {
 	createBooking,
 	acceptBooking,
+	declineBooking,
 	getBookings,
+	getBookingById,
 	startJob,
-	completeJob
+	completeJob,
+	updateBookingStatus
 }
