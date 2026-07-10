@@ -14,6 +14,12 @@ router.get("/me",
 
 	userController.getMyProfile);
 
+router.put(
+	"/me",
+	auth(UserRole.ADMIN, UserRole.CUSTOMER, UserRole.TECHNICIAN),
+	userController.updateMyProfile
+);
+
 router.put("/:userId", auth(UserRole.ADMIN), userController.updateCustomerToTechnician);
 
 export const userRoute = router;
