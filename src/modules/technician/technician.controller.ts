@@ -6,7 +6,7 @@ import { sendResponse } from "../../utils/sendResponse";
 
 const getAllTechnicians = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const result = await TechnicianService.getAllTechniciansFromDB();
+    const result = await TechnicianService.getAllTechniciansFromDB(req.query);
 
     sendResponse(res, {
       success: true,
@@ -17,6 +17,37 @@ const getAllTechnicians = catchAsync(
   }
 );
 
+const getTechnicianById = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const result = await TechnicianService.getTechnicianByIdFromDB(req.params.id as string);
+
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "Technician retrieved successfully",
+      data: result,
+    });
+  }
+);
+
+const updateMyProfile = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const result = await TechnicianService.updateMyTechnicianProfileIntoDB(
+      req.user!.id,
+      req.body
+    );
+
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "Technician profile saved successfully",
+      data: result,
+    });
+  }
+);
+
 export const TechnicianController = {
   getAllTechnicians,
+  getTechnicianById,
+  updateMyProfile,
 };
